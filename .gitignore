@@ -1,0 +1,5 @@
+/node_modules
+/dist
+axios.js
+src/tools/decrypt.js
+src/data/outlets.js

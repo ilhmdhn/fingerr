@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fingerprint Driver</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 40px;
+      background-color: #f0f0f0;
+    }
+    h1, h2, p {
+      text-align: center;
+    }
+    #fingerprint-img {
+      width: 320px;
+      height: 320px;
+      background-color: #ddd;
+      object-fit: contain;
+      margin: 20px 0;
+      border: 1px solid #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fingerprint Driver</h1>
+  <h2 id="state">State: -</h2>
+  <img id="fingerprint-img" src="" alt="Fingerprint Image">
+  <p id="response">Response: -</p>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+    
+    const stateEl = document.getElementById('state');
+    const imgEl = document.getElementById('fingerprint-img');
+    const responseEl = document.getElementById('response');
+    
+    ipcRenderer.on('set-state', (event, data) => {
+      stateEl.textContent = 'State: ' + data;
+    });
+
+    ipcRenderer.on('set-response', (event, data) => {
+      responseEl.textContent = 'Response: ' + text;
+    });
+
+    ipcRenderer.on('set-image', (event, data) => {
+      imgEl.src = data;
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Fingerprint WebAPI</title>
+</head>
+
+<body>
+
+  <script src="scripts/es6-shim.js"></script>
+  <script src="scripts/websdk.client.bundle.min.js"></script>
+  <script src="scripts/fingerprint.sdk.min.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    const captured = (image) => {
+      window.electronAPI.sendFinger(image);
+    }
+
+    const connectionState = (state) =>{
+      window.electronAPI.sendConnectionState(state);
+    }
+
+    const qualityState = (state) => {
+      window.electronAPI.sendQualityState(state);
+    }
+  </script>
+</body>
+
+</html>
