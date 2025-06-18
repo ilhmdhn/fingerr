@@ -13,8 +13,7 @@ const getOutlet = async () => {
         await sql.connect(dbConfig);
         const result = await sql.query(query);
         if (result.recordset.length > 0) {
-            // return result.recordset[0].Outlet;
-            return 'HP000';
+            return result.recordset[0].Outlet;
         } else {
             return ''
         }

@@ -1,28 +1,23 @@
 const Store = require('electron-store');
+const store = new Store(); // hanya sekali dibuat di sini
 
-const getDb = () =>{
-    const newStore = new Store();
-    const ip = newStore.get('ip');
-    const user = newStore.get('user');
-    const pass = newStore.get('pass');
-    const db = newStore.get('db');
+const getDb = () => {
     return {
-        ip: ip,
-        user: user,
-        pass: pass,
-        db: db,
-    }
-}
+        ip: store.get('ip'),
+        user: store.get('user'),
+        pass: store.get('pass'),
+        db: store.get('db')
+    };
+};
 
-const setDb = (ip, user, pass, db) =>{
-    const newStore = new Store();
-    newStore.set('ip', ip);
-    newStore.set('user', user);
-    newStore.set('pass', pass);
-    newStore.set('db', db);
-}
+const setDb = (ip, user, pass, db) => {
+    store.set('ip', ip);
+    store.set('user', user);
+    store.set('pass', pass);
+    store.set('db', db);
+};
 
 module.exports = {
     getDb,
     setDb
-}
+};

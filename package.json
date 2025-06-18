@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Fingerprint Service for POS Programs",
   "devDependencies": {
     "electron": "^22.0.0",
     "electron-builder": "^23.6.0"
