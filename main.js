@@ -254,6 +254,11 @@ const validateSetting = async () => {
 }
 
 app.setName('Fingerprint Service');
+
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+
 app.whenReady().then(() => {
     if (!app.requestSingleInstanceLock()) {
         app.quit();
