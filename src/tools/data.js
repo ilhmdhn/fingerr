@@ -1,5 +1,5 @@
 const Store = require('electron-store');
-const store = new Store(); // hanya sekali dibuat di sini
+const store = new Store();
 
 const getDb = () => {
     return {

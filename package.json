@@ -1,6 +1,6 @@
 {
   "name": "fingerprint_service",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "productName": "Fingerprint Service",
   "main": "main.js",
   "scripts": {

@@ -1,4 +1,5 @@
 const { getDb } = require('./data');
+
 module.exports = () => {
     const db = getDb();
     return {

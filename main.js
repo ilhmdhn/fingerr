@@ -3,8 +3,11 @@ const path = require('path');
 const { verify } = require('./src/tools/axios');
 const { uploadUserList } = require('./src/tools/axios');
 const udp = require('./src/tools/udp');
+const getUserPassword = require('./src/data/user_password');
 const outlet = require('./src/data/outlet');
 const outlets = require('./src/data/outlets');
+const { powerSaveBlocker } = require('electron');
+
 let mainWin, scanWin, tray;
 let isLoading = false;
 let isReady = false;
@@ -76,9 +79,15 @@ const scanning = async (image) => {
     try {
         mainWin.webContents.send('show-loading');
         const response = await verify(image);
-        mainWin.webContents.send('scan-result', response.user);
-        showNotification('User', response.user);
-        udp(response.user)
+        mainWin.webContents.send('scan-result', `${response.level}-${response.user}`);
+        const getPassword = await getUserPassword(response.user, response.level)
+        if (!getPassword) {
+            mainWin.webContents.send('hide-loading');
+            mainWin.webContents.send('warning-result', 'Password user dihapus');
+            return;
+        }
+        udp(`${response.user}|${getPassword}`);
+        showNotification('User', `${response.user}-${response.level}`);
         mainWin.webContents.send('hide-loading');
     } catch (err) {
         mainWin.webContents.send('warning-result', err);
@@ -124,7 +133,7 @@ const unknownNotification = (message) => {
 }
 
 function createScanWindow() {
-    scanWin = new BrowserWindow({
+    /*scanWin = new BrowserWindow({
         resizable: false,
         frame: false,
         alwaysOnTop: true,
@@ -139,10 +148,31 @@ function createScanWindow() {
             scrollBounce: false,
         },
         skipTaskbar: true
+    });*/
+
+    scanWin = new BrowserWindow({
+        width: 300,
+        height: 300,
+        x: 2000, // taruh di luar layar utama, tapi masih punya ukuran
+        y: 2000,
+        resizable: false,
+        frame: false,
+        alwaysOnTop: true,
+        skipTaskbar: true,
+        show: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            backgroundThrottling: false,
+            nodeIntegration: false,
+        }
     });
 
+
+
     scanWin.loadFile(path.join(__dirname, './src/page/index.html'));
-    scanWin.setBounds({ x: -1000, y: -1000, width: 0, height: 0 });
+    // scanWin.setBounds({ x: -1000, y: -1000, width: 0, height: 0 });
+    scanWin.setBounds({ x: 1000, y: 1000, width: 300, height: 300 });
 
     // scanWin.webContents.openDevTools();
     // scanWin.setBounds({ x: 0, y: 0, width: 720, height: 720 });
@@ -215,7 +245,11 @@ const validateSetting = async () => {
     }
 
     mainWin.webContents.send('hide-result', '');
-    uploadUserList();
+    try {
+        uploadUserList();
+    } catch (error) {
+        mainWin.webContents.send('warning-result', 'Gagal upload user list ke eportal');
+    }
     isReady = true;
 }
 
@@ -225,6 +259,9 @@ app.whenReady().then(() => {
         app.quit();
         return;
     }
+
+    const blockerId = powerSaveBlocker.start('prevent-app-suspension');
+    console.log("Power save blocker aktif, ID:", blockerId);
 
     createMainWindow();
     createScanWindow();
