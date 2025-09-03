@@ -34,7 +34,7 @@ function createMainWindow() {
         enableRemoteModule: true
     });
 
-    mainWin.loadFile(path.join(__dirname, './src/interface/index.html'));
+    mainWin.loadFile(path.join(__dirname, './src/interface/indexz.html'));
     mainWin.focus();
     mainWin.center();
 

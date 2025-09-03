@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dist": "electron-builder --win=portable",
+    "dist32": "electron-builder --win=portable --ia32",
     "start": "electron ."
   },
   "keywords": [],

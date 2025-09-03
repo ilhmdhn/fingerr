@@ -27,7 +27,7 @@ const getUserList = async () => {
             }
             return users;
         } else {
-            []
+            return []
         }
 
     } catch (err) {

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Fingerprint Driver</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-container: #e3f2fd;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --button-bg: #28a745;
+            --button-hover: #218838;
+            --navbar-bg: #343a40;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .settingBtn {
+            background: url('gear.png') center center no-repeat;
+            background-size: contain;
+            width: 50px;
+            height: 50px;
+            float: left;
+            position: absolute;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .main-container {
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .left-panel {
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px var(--shadow);
+    transition: background-color 0.3s ease;
+}
+
+        .right-panel {
+            flex: 1;
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: background-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .fingerprint-type-selector {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .fingerprint-type-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .fingerprint-type-selector select:focus {
+            outline: none;
+            border-color: var(--button-bg);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+        }
+
+        .fingerprint-display {
+            width: 300px;
+            height: 300px;
+            border: 3px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fingerprint-placeholder {
+            color: var(--text-secondary);
+            /* font-size: 1.1rem; */
+            text-align: center;
+        }
+
+        #imagediv #image {
+            height: 40vh;
+        }
+
+        .status-indicator {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .status-ready {
+            background-color: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .status-scanning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+
+        .loader_state {
+            display: none;
+            margin-top: 17vh;
+        }
+
+        .status-disc {
+            background-color: #ea2020;
+            color: #ffffff;
+            border: 2px solid #ffeaa7;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 5px 7px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            z-index: 1000;
+            font-size: 20px;
+        }
+
+        .theme-toggle:hover {
+            background: var(--button-hover);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background-color: var(--text-secondary);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+.left-panel-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 100vh;
+}
+
+.top-panel,
+.bottom-panel {
+    flex: 1;
+    padding: 12px;
+    font-size: 0.85rem;
+}
+
+.top-panel input,
+.bottom-panel input,
+.top-panel select,
+.bottom-panel select {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+.top-panel .form-label,
+.bottom-panel .form-label {
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+.left-panel .panel-title {
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+.btn-xs {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+}
+        @media (max-width: 768px) {
+
+            .content-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .fingerprint-display {
+                width: 250px;
+                height: 250px;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 10px;
+            }
+
+            .header-title {
+                font-size: 1.5rem;
+            }
+
+            .content-wrapper {
+                flex-direction: column;
+                gap: 15px;
+                padding: 0;
+            }
+
+            .left-panel,
+            .right-panel {
+                padding: 15px;
+            }
+
+            .fingerprint-display {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1;
+            }
+
+            .fingerprint-type-selector select {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+
+            .panel-title {
+                font-size: 1rem;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn-secondary {
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    </div>
+    <div class="main-container">
+        <h3 class="position-absolute" id="outlet-text" style="top: 20px; right: 70px; font-weight: bold;">OUTLET</h3>
+        <div class="header-section">
+            <h1 class="header-title">Fingerprint Driver</h1>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="left-panel-wrapper">
+            <div class="left-panel top-panel">
+                <h2 class="panel-title">Device</h2>
+
+                <div id="deviceInfo" class="mb-3" style="display:none;"></div>
+
+                <div id="status" class="status-indicator status-scanning">Scanning Device</div>
+                <p id="loader_state" class="status-indicator loader_state">Loading</p>
+
+
+                <div id="Scores" class="mt-3" style="display:none;">
+                    <label for="qualityInputBox"><strong>Scan Quality:</strong></label>
+                    <input type="text" id="qualityInputBox" class="form-control text-center mt-2" readonly>
+                </div>
+            </div>
+            <div class="left-panel bottom-panel">
+                <h2 class="panel-title">Database Setting</h2>
+<div class="row">
+                <div class="mb-3 col-md-6">
+                        <label for="ip" class="form-label">IP Address</label>
+                        <input type="text" class="form-control" id="ip" name="ip" required>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="user" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="user" name="user" required>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="db" class="form-label">Database Name</label>
+                        <input type="text" class="form-control" id="db" name="db" required>
+                    </div>
+                                    <div class="footer">
+                    <button type="button" class="btn btn-success btn-xs" data-bs-dismiss="modal" onclick="initSave()">Save</button>
+                </div>
+                </div>
+            </div>
+</div>
+            <div class="right-panel">
+                <h2 class="panel-title">Gambar Sidik Jari</h2>
+
+                <div class="fingerprint-display" id="fingerprintDisplay">
+                    <div class="fingerprint-placeholder" id="placeholder">
+                        <div id="imagediv"><img id="image" /></div>
+                    </div>
+
+                </div>
+                <div id="saveAndFormats" class="mb-3" style="display: none;">
+                    <form name="myForm" class="border p-3 bg-light">
+                        <div class="form-check" style="display:none;"><input type="checkbox" class="form-check-input"
+                                name="PngImage" checked value="4" onclick="checkOnly(this)"> PNG</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loaderOverlay" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+">
+        <div class="spinner-border text-success" style="width: 4rem; height: 4rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <script src="lib/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        const stateEl = document.getElementById('status');
+        const imageLayout = document.getElementById('image');
+        const responseEl = document.getElementById('response');
+        const ngaritResponse = document.getElementById('loader_state');
+
+        ipcRenderer.on('set-state', (event, data) => {
+            stateEl.classList.remove('status-scanning', 'status-disc', 'status-ready');
+
+            if (data === 'CONNECTED') {
+                stateEl.classList.add('status-ready');
+            } else if (data === 'DISCONNECT') {
+                stateEl.classList.add('status-disc');
+            } else {
+                stateEl.classList.add('status-scanning');
+            }
+
+            stateEl.textContent = data;
+        });
+
+
+        ipcRenderer.on('set-response', (event, data) => {
+            responseEl.textContent = 'Finger quality: ' + data;
+        });
+
+        ipcRenderer.on('set-image', (event, data) => {
+            imageLayout.src = data;
+        });
+
+        ipcRenderer.on('show-loading', (event, data) => {
+            document.getElementById('loaderOverlay').style.display = 'flex';
+        });
+
+        ipcRenderer.on('hide-loading', (event, data) => {
+            document.getElementById('loaderOverlay').style.display = 'none';
+        });
+
+        ipcRenderer.on('scan-result', (event, data) => {
+            ngaritResponse.style.display = 'block';
+            ngaritResponse.classList.add('status-ready');
+            ngaritResponse.classList.remove('status-scanning');
+            ngaritResponse.classList.remove('status-disc');
+            ngaritResponse.textContent = data;
+        });
+
+        ipcRenderer.on('warning-result', (event, data) => {
+            ngaritResponse.style.display = 'block';
+            ngaritResponse.classList.remove('status-ready');
+            ngaritResponse.classList.add('status-scanning');
+            ngaritResponse.classList.remove('status-disc');
+            ngaritResponse.textContent = data;
+        });
+
+        ipcRenderer.on('error-result', (event, data) => {
+            ngaritResponse.style.display = 'block';
+            ngaritResponse.classList.remove('status-ready');
+            ngaritResponse.classList.remove('status-scanning');
+            ngaritResponse.classList.add('status-disc');
+            ngaritResponse.textContent = data;
+        });
+
+        ipcRenderer.on('hide-result', (event, data) => {
+            ngaritResponse.style.display = 'none';
+            ngaritResponse.textContent = data;
+        });
+
+        ipcRenderer.on('OUTLET-CODE', (event, data)=>{
+            const outletCode = document.getElementById('outlet-text');
+            outletCode.textContent = data;  
+        });
+
+        const initSave = () =>{
+            const ip = document.getElementById('ip').value;
+            const user = document.getElementById('user').value;
+            const pass = document.getElementById('password').value;
+            const db = document.getElementById('db').value;
+
+            ipcRenderer.send('SUBMIT-SETTING', {
+                ip: ip,
+                user: user,
+                pass: pass,
+                db: db
+            });
+        }
+
+        
+        ipcRenderer.on('SETTINGS', (event, data) => {
+            const ip = document.getElementById('ip');
+            const user = document.getElementById('user');
+            const pass = document.getElementById('password');
+            const db = document.getElementById('db');
+            
+            ip.value = data.ip;
+            user.value = data.user;
+            pass.value = data.pass;
+            db.value = data.db;
+        });
+    </script>
+</body>
+
+
+</html>
